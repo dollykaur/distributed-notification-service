@@ -5,6 +5,9 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/notification-api/pom.xml" />
+        <option value="$PROJECT_DIR$/notification-worker-sms/pom.xml" />
+        <option value="$PROJECT_DIR$/notification-worker-push/pom.xml" />
+        <option value="$PROJECT_DIR$/notification-worker-email/pom.xml" />
       </list>
     </option>
   </component>

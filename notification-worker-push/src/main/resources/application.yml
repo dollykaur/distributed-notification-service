@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/notifications
-    username: notif_user
-    password: notif_pass
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/notifications}
+    username: ${DB_USERNAME:notif_user}
+    password: ${DB_PASSWORD:notif_pass}
 
   jpa:
     hibernate:
@@ -13,15 +13,15 @@ spring:
         hibernate.jdbc.time_zone: Asia/Kolkata
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: push-worker-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
   redis:
-    host: localhost
-    port: 6379
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
 
 server:
   port: 8084

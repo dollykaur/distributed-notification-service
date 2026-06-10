@@ -147,7 +147,12 @@ NO  → Process → Send notification → Update PostgreSQL → Mark in Redis (T
 - ✅ **Idempotency** — Redis prevents duplicate notifications from being sent
 - ✅ **Multi-channel support** — Email, SMS and Push notifications
 - ✅ **Status tracking** — notification status updated in PostgreSQL (`PENDING` → `SENT`)
-- ✅ **Metrics & Monitoring** — email worker tracks processed/duplicate/failed/DLQ counts
+- ✅ **Dead Letter Queue (DLQ)** — failed messages published to `notifications-api.DLQ`
+- ✅ **Retry with exponential backoff** — 3 retries with 1s → 2s → 4s intervals before DLQ
+- ✅ **SMTP Email sending** — real email sending via `JavaMailSender`
+- ✅ **Metrics & Monitoring** — tracks processed/duplicate/failed/DLQ counts via Micrometer
+- ✅ **Docker Compose** — full infrastructure setup with one command
+- ✅ **Prometheus & Grafana** — metrics collection and visualization dashboards
 - ✅ **Scalable** — each worker can be scaled independently
 - ✅ **Fault tolerant** — if a worker is down, Kafka queues messages until it recovers
 
@@ -247,16 +252,21 @@ Each service has its own `application.properties`:
 
 ```properties
 # PostgreSQL
-spring.datasource.url=jdbc:postgresql://localhost:5432/notifications
-spring.datasource.username=notif_user
-spring.datasource.password=notif_pass
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/notifications}
+spring.datasource.username=${DB_USERNAME:notif_user}
+spring.datasource.password=${DB_PASSWORD:notif_pass}
 
 # Kafka
-spring.kafka.bootstrap-servers=localhost:9092
+spring.kafka.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
 # Redis
-spring.redis.host=localhost
-spring.redis.port=6379
+spring.redis.host=${REDIS_HOST:localhost}
+spring.redis.port=${REDIS_PORT:6379}
+```
+
+Copy `.env.example` to `.env` and fill in your values:
+```bash
+cp .env.example .env
 ```
 
 ---
@@ -272,13 +282,11 @@ spring.redis.port=6379
 
 ## Future Improvements
 
-- [ ] Add Dead Letter Queue (DLQ) for failed messages
 - [ ] Integrate Twilio for real SMS sending
 - [ ] Integrate SendGrid for real email sending
 - [ ] Add Firebase Cloud Messaging for push notifications
-- [ ] Add Docker Compose for easy local setup
 - [ ] Add API authentication (JWT)
-- [ ] Add retry mechanism with exponential backoff
+- [ ] Add rate limiting per recipient
 
 ---
 
